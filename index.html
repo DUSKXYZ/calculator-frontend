@@ -14,17 +14,41 @@
     <h1>🧮 前后端分离计算器</h1>
     <p class="subtitle">软件工程第一次作业 · 前端只负责输入与展示，所有计算由后端完成</p>
     <!-- 这个小圆点实时反映后端是否连通（app.js 会在请求成功/失败时更新它） -->
-    <span id="backend-status" class="status-dot">● 正在检查后端连接…</span>
+    <div class="topbar-controls">
+      <span id="backend-status" class="status-dot">● 正在检查后端连接…</span>
+      <!-- 扩展功能：明暗主题切换（偏好保存在浏览器本地 localStorage） -->
+      <button id="theme-toggle" class="btn-theme" title="切换明暗主题">🌙 夜间模式</button>
+    </div>
   </header>
 
   <main class="layout">
 
     <!-- ===== 左侧卡片：计算器 ===== -->
     <section class="card calculator">
+      <!-- 工具行：科学键盘的显示/隐藏开关（【扩展功能】） -->
+      <div class="calc-toolbar">
+        <button id="toggle-sci" class="btn-sci">🧪 科学键盘</button>
+      </div>
+
       <!-- 显示区：上面一行是当前表达式，下面一行是后端返回的结果或错误信息 -->
       <div class="display">
         <div id="expression" class="expression">&nbsp;</div>
         <div id="result" class="result">0</div>
+      </div>
+
+      <!-- 扩展功能：科学键盘（默认收起）。
+           按键带同样的 .key 类和 data-key，所以复用普通按键的全部点击逻辑；
+           sqrt/log/ln 显示为 √ log ln，实际发送的字符见 data-key -->
+      <div class="keys sci hidden" id="sci-keys">
+        <button class="key" data-key="sin(">sin</button>
+        <button class="key" data-key="cos(">cos</button>
+        <button class="key" data-key="tan(">tan</button>
+        <button class="key" data-key="^">^</button>
+
+        <button class="key" data-key="sqrt(">√</button>
+        <button class="key" data-key="log(">log</button>
+        <button class="key" data-key="ln(">ln</button>
+        <button class="key" data-key="π">π</button>
       </div>
 
       <!-- 按键区：
@@ -57,7 +81,7 @@
         <button class="key equal" data-action="submit">=</button>
       </div>
 
-      <p class="tip">支持键盘：数字 / + - * / ( ) . 、Enter = 计算、Backspace = 退格、Esc = 清空</p>
+      <p class="tip">支持键盘：数字 / + - * / ( ) . ^ e 、Enter = 计算、Backspace = 退格、Esc = 清空（三角与对数参数为弧度）</p>
     </section>
 
     <!-- ===== 右侧卡片：计算历史（数据全部来自后端数据库，前端刷新不丢失） ===== -->

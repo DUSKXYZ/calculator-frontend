@@ -33,9 +33,10 @@ document.querySelectorAll(".key").forEach((btn) => {
 });
 
 // 键盘支持：数字、运算符、括号直接输入；Enter=计算；Backspace=退格；Esc=清空
+// （扩展后 ^ 和 e 也可以从键盘输入，对应幂运算与自然常数）
 document.addEventListener("keydown", (e) => {
   const k = e.key;
-  if ((k >= "0" && k <= "9") || (k.length === 1 && "+-*/().".includes(k))) {
+  if ((k >= "0" && k <= "9") || (k.length === 1 && "+-*/().^e".includes(k))) {
     appendToExpr(k);
     e.preventDefault();
   } else if (k === "Enter") {
@@ -60,6 +61,32 @@ document.getElementById("clear-history").addEventListener("click", async () => {
   } catch (err) {
     markBackendStatus(false);
   }
+});
+
+/* ==================== 扩展功能：主题切换 & 科学键盘 ==================== */
+
+// 主题切换：改 <html> 上的 data-theme 属性，CSS 里 [data-theme="dark"] 的变量组自动生效。
+// 用户的主题偏好存在 localStorage —— 注意：这只是“界面偏好”，业务数据（历史）永远只存在后端数据库。
+const themeBtn = document.getElementById("theme-toggle");
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme; // <html data-theme="dark|light">
+  themeBtn.textContent = theme === "dark" ? "☀️ 白天模式" : "🌙 夜间模式";
+}
+
+// 页面加载时恢复上次的主题；没存过就用亮色
+applyTheme(localStorage.getItem("theme") || "light");
+
+themeBtn.addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next); // 记住选择，下次打开还是这个主题
+  applyTheme(next);
+});
+
+// 科学键盘：点击“🧪 科学键盘”按钮，显示/隐藏第二组按键
+const sciKeys = document.getElementById("sci-keys");
+document.getElementById("toggle-sci").addEventListener("click", () => {
+  sciKeys.classList.toggle("hidden");
 });
 
 /* ==================== 输入处理 ==================== */

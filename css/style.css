@@ -1,19 +1,46 @@
 /* ============================================================
    计算器前端样式表
    设计思路：左右两栏布局（左边计算器、右边历史），
-   用 CSS 变量统一配色，方便以后做“主题切换”扩展功能。
+   全部配色做成 CSS 变量 —— 这正是“主题切换”扩展的基础：
+   暗色主题只需在 [data-theme="dark"] 里覆盖一遍变量即可。
    ============================================================ */
 
-/* ---------- 全局配色变量 ---------- */
+/* ---------- 亮色主题（默认变量组） ---------- */
 :root {
-  --bg: #eef1f6;         /* 页面背景色 */
-  --card: #ffffff;       /* 卡片背景色 */
-  --primary: #3b82f6;    /* 主题蓝（运算符 / 结果高亮） */
+  --bg: #eef1f6;              /* 页面背景色 */
+  --card: #ffffff;            /* 卡片背景色 */
+  --primary: #3b82f6;         /* 主题蓝（运算符 / 结果高亮） */
   --primary-dark: #2563eb;
-  --danger: #ef4444;     /* 错误红（删除按钮 / 错误提示） */
-  --text: #1f2937;       /* 正文文字色 */
-  --muted: #6b7280;      /* 次要文字色（时间、提示） */
+  --danger: #ef4444;          /* 错误红（删除按钮 / 错误提示） */
+  --danger-soft: #fee2e2;     /* 浅红底（删除按钮背景） */
+  --danger-soft-hover: #fecaca;
+  --text: #1f2937;            /* 正文文字色 */
+  --muted: #6b7280;           /* 次要文字色（时间、提示） */
+  --key-bg: #eef2f7;          /* 普通按键 */
+  --key-bg-hover: #e2e8f0;
+  --key-func: #e5e7eb;        /* 功能键（C、退格、括号） */
+  --op-bg: #dbeafe;           /* 运算符键背景 */
+  --divider: #f1f3f6;         /* 历史列表分隔线 */
   --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- 暗色主题：只覆盖变量，不用改任何组件样式（【扩展功能】） ---------- */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --primary: #60a5fa;
+  --primary-dark: #3b82f6;
+  --danger: #f87171;
+  --danger-soft: #7f1d1d;
+  --danger-soft-hover: #991b1b;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --key-bg: #334155;
+  --key-bg-hover: #3f4c63;
+  --key-func: #475569;
+  --op-bg: #1e3a5f;
+  --divider: #334155;
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
 }
 
 /* ---------- 基础重置 ---------- */
@@ -28,6 +55,8 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  /* 主题切换时颜色平滑过渡，而不是瞬间跳变 */
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* ---------- 页头 ---------- */
@@ -46,10 +75,16 @@ body {
   margin-top: 6px;
 }
 
-/* 后端连接状态小圆点 */
+.topbar-controls {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* 后端连接状态小圆点 / 主题切换按钮：同款胶囊造型 */
 .status-dot {
   display: inline-block;
-  margin-top: 10px;
   font-size: 13px;
   color: var(--muted);
   background: var(--card);
@@ -64,6 +99,21 @@ body {
 
 .status-dot.bad {
   color: var(--danger); /* 红色 = 后端未连接 */
+}
+
+.btn-theme {
+  border: none;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.btn-theme:hover {
+  color: var(--primary);
 }
 
 /* ---------- 主体两栏布局 ---------- */
@@ -89,11 +139,33 @@ body {
   border-radius: 18px;
   box-shadow: var(--shadow);
   padding: 22px;
+  transition: background-color 0.25s ease;
+}
+
+/* ---------- 工具行：科学键盘开关（【扩展功能】） ---------- */
+.calc-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.btn-sci {
+  border: none;
+  background: var(--op-bg);
+  color: var(--primary);
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-sci:hover {
+  filter: brightness(1.08);
 }
 
 /* ---------- 计算器显示区 ---------- */
 .display {
-  background: #111827;      /* 深色屏幕质感 */
+  background: #111827;      /* 深色屏幕质感（明暗主题下都保持深色） */
   color: #f9fafb;
   border-radius: 14px;
   padding: 18px 20px;
@@ -138,34 +210,34 @@ body {
   font-size: 20px;
   border: none;
   border-radius: 12px;
-  background: #eef2f7;
+  background: var(--key-bg);
   color: var(--text);
   cursor: pointer;
   transition: transform 0.12s ease, background 0.12s ease;
 }
 
 .key:hover {
-  background: #e2e8f0;
+  background: var(--key-bg-hover);
 }
 
 .key:active {
   transform: scale(0.95);   /* 按下去有“被按下”的感觉 */
 }
 
-/* 功能键（C、退格、括号）：灰色 */
+/* 功能键（C、退格、括号） */
 .key.func {
-  background: #e5e7eb;
+  background: var(--key-func);
   font-size: 18px;
 }
 
-/* 运算符键：浅蓝底 + 蓝字 */
+/* 运算符键 */
 .key.op {
-  background: #dbeafe;
+  background: var(--op-bg);
   color: var(--primary);
   font-weight: 600;
 }
 
-/* 等号键：主题蓝实底白字，视觉上最突出 */
+/* 等号键：主题色实底白字，视觉上最突出 */
 .key.equal {
   background: var(--primary);
   color: #ffffff;
@@ -174,6 +246,25 @@ body {
 
 .key.equal:hover {
   background: var(--primary-dark);
+}
+
+/* 科学键盘按键：比主键盘小巧一些（【扩展功能】） */
+.keys.sci {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.keys.sci .key {
+  padding: 12px 0;
+  font-size: 15px;
+  background: var(--op-bg);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* 隐藏工具类：控制科学键盘收起/展开 */
+.hidden {
+  display: none;
 }
 
 .tip {
@@ -197,7 +288,7 @@ body {
 
 .btn-clear {
   border: none;
-  background: #fee2e2;
+  background: var(--danger-soft);
   color: var(--danger);
   padding: 6px 12px;
   border-radius: 8px;
@@ -206,7 +297,7 @@ body {
 }
 
 .btn-clear:hover {
-  background: #fecaca;
+  background: var(--danger-soft-hover);
 }
 
 .history-list {
@@ -221,7 +312,7 @@ body {
   align-items: center;
   gap: 10px;
   padding: 12px 6px;
-  border-bottom: 1px solid #f1f3f6;
+  border-bottom: 1px solid var(--divider);
 }
 
 .history-item .expr {
@@ -249,7 +340,7 @@ body {
   height: 28px;
   border: none;
   border-radius: 50%;
-  background: #fee2e2;
+  background: var(--danger-soft);
   color: var(--danger);
   font-size: 13px;
   cursor: pointer;
