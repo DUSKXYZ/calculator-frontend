@@ -1,0 +1,276 @@
+/* ============================================================
+   计算器前端样式表
+   设计思路：左右两栏布局（左边计算器、右边历史），
+   用 CSS 变量统一配色，方便以后做“主题切换”扩展功能。
+   ============================================================ */
+
+/* ---------- 全局配色变量 ---------- */
+:root {
+  --bg: #eef1f6;         /* 页面背景色 */
+  --card: #ffffff;       /* 卡片背景色 */
+  --primary: #3b82f6;    /* 主题蓝（运算符 / 结果高亮） */
+  --primary-dark: #2563eb;
+  --danger: #ef4444;     /* 错误红（删除按钮 / 错误提示） */
+  --text: #1f2937;       /* 正文文字色 */
+  --muted: #6b7280;      /* 次要文字色（时间、提示） */
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- 基础重置 ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ---------- 页头 ---------- */
+.topbar {
+  text-align: center;
+  padding: 28px 16px 8px;
+}
+
+.topbar h1 {
+  font-size: 26px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+/* 后端连接状态小圆点 */
+.status-dot {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--card);
+  padding: 4px 12px;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+
+.status-dot.ok {
+  color: #10b981;  /* 绿色 = 后端已连接 */
+}
+
+.status-dot.bad {
+  color: var(--danger); /* 红色 = 后端未连接 */
+}
+
+/* ---------- 主体两栏布局 ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: 400px 1fr; /* 左列固定 400px 给计算器，剩余给历史 */
+  gap: 24px;
+  max-width: 1020px;
+  margin: 20px auto 0;
+  padding: 0 20px 32px;
+  align-items: start;
+}
+
+/* 手机等窄屏：改成单列上下排布 */
+@media (max-width: 880px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 22px;
+}
+
+/* ---------- 计算器显示区 ---------- */
+.display {
+  background: #111827;      /* 深色屏幕质感 */
+  color: #f9fafb;
+  border-radius: 14px;
+  padding: 18px 20px;
+  text-align: right;        /* 数字靠右，符合计算器习惯 */
+  margin-bottom: 18px;
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.expression {
+  color: #9ca3af;           /* 表达式行用灰色小字 */
+  font-size: 16px;
+  word-break: break-all;    /* 表达式太长时自动换行 */
+  min-height: 22px;
+}
+
+.result {
+  font-size: 34px;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+/* 出错时结果区变红、变小（错误信息比数字长） */
+.result.error {
+  color: #f87171;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* ---------- 按键区 ---------- */
+.keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 列等宽 */
+  gap: 12px;
+}
+
+.key {
+  padding: 18px 0;
+  font-size: 20px;
+  border: none;
+  border-radius: 12px;
+  background: #eef2f7;
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.key:hover {
+  background: #e2e8f0;
+}
+
+.key:active {
+  transform: scale(0.95);   /* 按下去有“被按下”的感觉 */
+}
+
+/* 功能键（C、退格、括号）：灰色 */
+.key.func {
+  background: #e5e7eb;
+  font-size: 18px;
+}
+
+/* 运算符键：浅蓝底 + 蓝字 */
+.key.op {
+  background: #dbeafe;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* 等号键：主题蓝实底白字，视觉上最突出 */
+.key.equal {
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.key.equal:hover {
+  background: var(--primary-dark);
+}
+
+.tip {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ---------- 历史面板 ---------- */
+.history-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.history-head h2 {
+  font-size: 18px;
+}
+
+.btn-clear {
+  border: none;
+  background: #fee2e2;
+  color: var(--danger);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-clear:hover {
+  background: #fecaca;
+}
+
+.history-list {
+  list-style: none;
+  max-height: 520px;        /* 超出可滚动，不把页面撑长 */
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 6px;
+  border-bottom: 1px solid #f1f3f6;
+}
+
+.history-item .expr {
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.history-item .res {
+  color: var(--primary);
+  font-weight: 600;
+  margin-top: 2px;
+  word-break: break-all;
+}
+
+.history-item .time {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* 每条记录右侧的删除按钮 */
+.history-item .del {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: #fee2e2;
+  color: var(--danger);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.history-item .del:hover {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 30px 0;
+  font-size: 14px;
+}
+
+/* ---------- 页脚 ---------- */
+.footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 12px 16px 28px;
+}

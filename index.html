@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <!-- viewport：让页面在手机上也按设备宽度正确缩放（响应式） -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前后端分离计算器</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===== 页头：标题 + 后端连接状态 ===== -->
+  <header class="topbar">
+    <h1>🧮 前后端分离计算器</h1>
+    <p class="subtitle">软件工程第一次作业 · 前端只负责输入与展示，所有计算由后端完成</p>
+    <!-- 这个小圆点实时反映后端是否连通（app.js 会在请求成功/失败时更新它） -->
+    <span id="backend-status" class="status-dot">● 正在检查后端连接…</span>
+  </header>
+
+  <main class="layout">
+
+    <!-- ===== 左侧卡片：计算器 ===== -->
+    <section class="card calculator">
+      <!-- 显示区：上面一行是当前表达式，下面一行是后端返回的结果或错误信息 -->
+      <div class="display">
+        <div id="expression" class="expression">&nbsp;</div>
+        <div id="result" class="result">0</div>
+      </div>
+
+      <!-- 按键区：
+           data-key   → 点击后追加到表达式的字符（界面显示 × ÷ −，实际发送 * / -）
+           data-action→ 特殊动作：clear 清空 / backspace 退格 / submit 提交给后端计算 -->
+      <div class="keys">
+        <button class="key func" data-action="clear">C</button>
+        <button class="key func" data-action="backspace">⌫</button>
+        <button class="key func" data-key="(">(</button>
+        <button class="key func" data-key=")">)</button>
+
+        <button class="key" data-key="7">7</button>
+        <button class="key" data-key="8">8</button>
+        <button class="key" data-key="9">9</button>
+        <button class="key op" data-key="/">÷</button>
+
+        <button class="key" data-key="4">4</button>
+        <button class="key" data-key="5">5</button>
+        <button class="key" data-key="6">6</button>
+        <button class="key op" data-key="*">×</button>
+
+        <button class="key" data-key="1">1</button>
+        <button class="key" data-key="2">2</button>
+        <button class="key" data-key="3">3</button>
+        <button class="key op" data-key="-">−</button>
+
+        <button class="key" data-key="0">0</button>
+        <button class="key" data-key=".">.</button>
+        <button class="key op" data-key="+">+</button>
+        <button class="key equal" data-action="submit">=</button>
+      </div>
+
+      <p class="tip">支持键盘：数字 / + - * / ( ) . 、Enter = 计算、Backspace = 退格、Esc = 清空</p>
+    </section>
+
+    <!-- ===== 右侧卡片：计算历史（数据全部来自后端数据库，前端刷新不丢失） ===== -->
+    <section class="card history">
+      <div class="history-head">
+        <h2>计算历史</h2>
+        <!-- 清空按钮：调用后端 DELETE /api/history -->
+        <button id="clear-history" class="btn-clear">🗑 清空</button>
+      </div>
+      <!-- 历史列表：js/app.js 里的 refreshHistory() 负责渲染 -->
+      <ul id="history-list" class="history-list"></ul>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>前端仓库：原生 HTML / CSS / JavaScript，无任何框架 · 计算与存储：Java 后端 + SQLite 数据库</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
